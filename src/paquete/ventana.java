@@ -30,7 +30,7 @@ public class ventana extends JFrame implements ActionListener{
         boton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                guardar();
+                baseDeDatos.guardar();
             }
         });
         label = new JLabel();
@@ -153,17 +153,6 @@ public class ventana extends JFrame implements ActionListener{
        }
     }
 
-
-    private void guardar() {
-        String localFile = "src/paquete/file/basededatos.xlsx";
-        System.out.println(localFile);
-        try{
-            Runtime.getRuntime().exec("cmd /c dir"+localFile);
-        }catch (IOException e){
-            e.printStackTrace();
-            System.out.println(e);
-        }
-    }
 
 
     public static void main (String[] args){
