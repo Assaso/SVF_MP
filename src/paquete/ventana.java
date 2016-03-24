@@ -10,8 +10,9 @@ import java.io.IOException;
 public class ventana extends JFrame implements ActionListener{
 
     JButton boton, boton1, boton2;
-    JLabel label, title;
+    JLabel label, title, etiqueta;
     JComboBox day, month, year;
+    JTextField OTMP;
 
     int i, j;
 
@@ -30,7 +31,11 @@ public class ventana extends JFrame implements ActionListener{
         boton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                baseDeDatos.guardar();
+                try {
+                    baseDeDatos.guardar();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
         label = new JLabel();
@@ -42,9 +47,18 @@ public class ventana extends JFrame implements ActionListener{
         boton1 = new JButton("Generar reporte");
         boton1.setBounds(420, 300, 250, 50);
         add(boton1);
-        title = new JLabel("FECHA DE ENTREGA DE PLANOS");
+        title = new JLabel("ORDEN DE TRABAJO");
         title.setBounds(15, 15, 250, 50);
         add(title);
+
+        etiqueta = new JLabel("FECHA DE ENTREGA DE PLANOS");
+        etiqueta.setBounds(15, 100, 250, 50);
+        add(etiqueta);
+
+        OTMP = new JTextField();
+        OTMP.setBounds(15, 60, 200, 30);
+        add(OTMP);
+
         month = new JComboBox(months);
         month.addItemListener(e -> {
             cambio();
@@ -158,6 +172,7 @@ public class ventana extends JFrame implements ActionListener{
     public static void main (String[] args){
         ventana v = new ventana();
         v.setBounds(0,0,700,400);
+        v.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         v.setLocationRelativeTo(null);
         v.setTitle("Seguimiento de OTMP");
         v.setVisible(true);
