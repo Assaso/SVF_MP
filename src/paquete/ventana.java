@@ -1,5 +1,7 @@
 package paquete;
 
+import jxl.read.biff.BiffException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +15,8 @@ public class ventana extends JFrame implements ActionListener{
     JLabel label, title, etiqueta;
     JComboBox day, month, year;
     JTextField OTMP;
-
+    int dia, mes, ano;
+    String orden;
     int i, j;
 
 
@@ -31,13 +34,27 @@ public class ventana extends JFrame implements ActionListener{
         boton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    baseDeDatos.guardar();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                orden = OTMP.getText();
+                if (OTMP.getText().equals("")) {
+                    JOptionPane.showMessageDialog(ventana.this, "OTMP no puede estar vacia");
+                } else {
+                    try {
+                        baseDeDatos.buscar(orden);
+
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    } catch (BiffException e1) {
+                        e1.printStackTrace();
+                    }
+                    try {
+                        baseDeDatos.guardar();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
+
         label = new JLabel();
         label.setBounds(200, 0, 300, 350);
         //label.setIcon();

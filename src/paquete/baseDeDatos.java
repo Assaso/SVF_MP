@@ -1,11 +1,13 @@
 package paquete;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+
+import javax.swing.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,15 +20,43 @@ import java.util.List;
 
 public class baseDeDatos {
 
+    static String localFile = "src/paquete/file/basededatos.xls";
+
     public baseDeDatos(){
 
     }
 
-    public static void guardar() throws IOException {
-        String localFile = "src/paquete/file/basededatos.xls";
+    public static void buscar(String orden) throws IOException, BiffException {
+        int x = 0;
+        int c = 0;
+        try{
+            Workbook workbook = Workbook.getWorkbook(new File(localFile));
+
+            Sheet sheet = workbook.getSheet(0);
+
+            Cell cell = sheet.getCell(x,0);
+            while(!cell.toString().equals("")){
+                if (cell.toString().equals(orden)){
+                c = c + 1;
+                    break;
+                }else {
+                    cell = sheet.getCell(x++, 0);
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getCompare() {
+        return c;
+    }
+    }
+
+/**  public static void guardar() throws IOException {
         FileInputStream fis = null;
         List sheetData = new ArrayList();
-        System.out.println(localFile);
+        //System.out.println(localFile);
         try{
            fis = new FileInputStream(localFile);
             HSSFWorkbook workbook = new HSSFWorkbook(fis);
@@ -47,7 +77,6 @@ public class baseDeDatos {
 
         }catch (IOException e){
             e.printStackTrace();
-            System.out.println(e);
         }finally {
             if(fis != null){
                 fis.close();
@@ -75,4 +104,4 @@ public class baseDeDatos {
             System.out.println("");
         }
     }
-}
+} */
