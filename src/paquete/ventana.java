@@ -1,13 +1,20 @@
 package paquete;
 
+import jxl.*;
+import jxl.format.CellFormat;
 import jxl.read.biff.BiffException;
+import jxl.write.*;
+import jxl.write.Label;
+import jxl.write.biff.CellValue;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ventana extends JFrame implements ActionListener{
 
@@ -18,6 +25,7 @@ public class ventana extends JFrame implements ActionListener{
     int dia, mes, ano;
     String orden;
     int i, j;
+    static String localFile = "src/paquete/file/basededatos.xls";
 
 
     public ventana(){
@@ -34,21 +42,15 @@ public class ventana extends JFrame implements ActionListener{
         boton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                orden = OTMP.getText();
+                orden = OTMP.getText().toUpperCase();
                 if (OTMP.getText().equals("")) {
                     JOptionPane.showMessageDialog(ventana.this, "OTMP no puede estar vacia");
                 } else {
                     try {
-                        baseDeDatos.buscar(orden);
-
+                        buscar(orden);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     } catch (BiffException e1) {
-                        e1.printStackTrace();
-                    }
-                    try {
-                        baseDeDatos.guardar();
-                    } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
@@ -93,6 +95,16 @@ public class ventana extends JFrame implements ActionListener{
         day= new JComboBox(days);
         day.setBounds(165, 150, 55, 25);
         add(day);
+
+        //CREAR LABEL DE PROYECTOS PENDIENTES
+
+
+    }
+
+    public void guardar(int x, String orden, Sheet sheet){
+        sheet.
+
+
     }
 
     public void cambioYear() {
@@ -185,13 +197,90 @@ public class ventana extends JFrame implements ActionListener{
     }
 
 
+    public void buscar(String orden) throws IOException, BiffException {
+        int x = 0;
+        try{
+            Workbook workbook = Workbook.getWorkbook(new File(localFile));
+
+            Sheet sheet = workbook.getSheet(0);
+
+            String cell = sheet.getCell(x,0).getContents();
+            System.out.println(cell);
+            while(!cell.equals("")){
+                if (cell.equals(orden)){
+                    JOptionPane.showMessageDialog(ventana.this, "OTMP ya existente");
+                    break;
+                }else {
+                    x = x +1;
+                    cell = sheet.getCell(x, 0).getContents();
+                    System.out.println(x);
+                    System.out.println(cell);
+                }
+            }
+            guardar(x, orden, sheet);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public class pendientes{
+        private String otmp;
+        private int dias;
+
+        public pendientes(String otmp, int dias){
+            this.otmp = otmp;
+            this.dias = dias;
+        }
+
+        public void setOtmp(String otmp){
+            this.otmp = otmp;
+        }
+
+        public void setDias(int dias){
+            this.dias = dias;
+        }
+
+        public String getOtmp(){
+            return otmp;
+        }
+
+        public int getDias(){
+            return dias;
+        }
+    }
+
 
     public static void main (String[] args){
+        int status = 0;
+
+        List<pendientes> ROW= new ArrayList<pendientes>();
+
+        Workbook workbook = null;
+        try {
+            workbook = Workbook.getWorkbook(new File(localFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BiffException e) {
+            e.printStackTrace();
+        }
+
+        Sheet sheet = workbook.getSheet(0);
+
+        String cell = sheet.getCell(0,5).getContents();
+        System.out.println(cell);
+        while(!cell.equals("")){
+            if (cell.equals("0")){
+               ROW.add(new pendientes(sheet.getCell(0, status).getContents(), sheet.getCell(0, 4)));
+            }
+            }
+        }
+
         ventana v = new ventana();
         v.setBounds(0,0,700,400);
         v.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         v.setLocationRelativeTo(null);
         v.setTitle("Seguimiento de OTMP");
         v.setVisible(true);
+
     }
 }

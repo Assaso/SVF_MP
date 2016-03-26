@@ -1,4 +1,4 @@
-package paquete;
+/**package paquete;
 
 
 import jxl.Cell;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
+
  * Created by JGALLARDO on 24/03/2016.
- */
+
 
 public class baseDeDatos {
 
