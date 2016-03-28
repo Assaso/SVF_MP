@@ -19,12 +19,14 @@ import java.util.ArrayList;
 public class ventana extends JFrame implements ActionListener{
 
     JButton boton, boton1, boton2;
-    JLabel label, title, etiqueta;
+    JLabel label, title, etiqueta, label1;
     JComboBox day, month, year;
     JTextField OTMP;
     int dia, mes, ano;
     String orden;
     int i, j;
+    int status, contador;
+    List prow;
     static String localFile = "src/paquete/file/basededatos.xls";
 
 
@@ -97,13 +99,21 @@ public class ventana extends JFrame implements ActionListener{
         add(day);
 
         //CREAR LABEL DE PROYECTOS PENDIENTES
-
+      llenado();
+      /**  System.out.println(prow.getItems());
+        for (int i = 0; i<=contador; i++){
+            label1 = new JLabel(prow.getItem(i+1));
+            if (i==0) {
+                label1.setBounds(400, 15, 300, 50);
+            }else{
+                label1.setBounds(400, (15 + 50) * (i), 300, 50);
+            }
+        add(label1);
+        }*/
 
     }
 
     public void guardar(int x, String orden, Sheet sheet){
-        sheet.
-
 
     }
 
@@ -224,10 +234,9 @@ public class ventana extends JFrame implements ActionListener{
     }
 
     public class pendientes{
-        private String otmp;
-        private int dias;
+        private String otmp, dias;
 
-        public pendientes(String otmp, int dias){
+        public pendientes(String otmp, String dias){
             this.otmp = otmp;
             this.dias = dias;
         }
@@ -236,7 +245,7 @@ public class ventana extends JFrame implements ActionListener{
             this.otmp = otmp;
         }
 
-        public void setDias(int dias){
+        public void setDias(String dias){
             this.dias = dias;
         }
 
@@ -244,37 +253,47 @@ public class ventana extends JFrame implements ActionListener{
             return otmp;
         }
 
-        public int getDias(){
+        public String getDias(){
             return dias;
         }
     }
 
+        public void llenado() {
+            prow = new List();
+            contador = 0;
+            int status = 0;
 
-    public static void main (String[] args){
-        int status = 0;
+            Workbook workbook = null;
+            try {
+                workbook = Workbook.getWorkbook(new File(localFile));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (BiffException e) {
+                e.printStackTrace();
+            }
 
-        List<pendientes> ROW= new ArrayList<pendientes>();
-
-        Workbook workbook = null;
-        try {
-            workbook = Workbook.getWorkbook(new File(localFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (BiffException e) {
-            e.printStackTrace();
+            Sheet sheet = workbook.getSheet(0);
+            String cell = sheet.getCell(5, 0).getContents();
+          //  System.out.println(cell.toString());
+            while (!cell.equals("")) {
+                if (cell.equals("0")) {
+                    String z = sheet.getCell(0, status).getContents();
+                    System.out.println(z);
+                    String y = sheet.getCell(4, status).getContents();
+                    System.out.println(y);
+                    contador = contador + 1;
+                    prow.add(String.valueOf(new pendientes(z, y)));
+                }
+                status = status + 1;
+                cell = sheet.getCell(5, status).getContents();
+            }
+            System.out.println(prow.toString());
         }
 
-        Sheet sheet = workbook.getSheet(0);
 
-        String cell = sheet.getCell(0,5).getContents();
-        System.out.println(cell);
-        while(!cell.equals("")){
-            if (cell.equals("0")){
-               ROW.add(new pendientes(sheet.getCell(0, status).getContents(), sheet.getCell(0, 4)));
-            }
-            }
-        }
 
+
+    public static void main(String[] args){
         ventana v = new ventana();
         v.setBounds(0,0,700,400);
         v.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
