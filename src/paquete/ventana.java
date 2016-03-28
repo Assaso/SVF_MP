@@ -26,7 +26,7 @@ public class ventana extends JFrame implements ActionListener{
     String orden;
     int i, j;
     int status, contador;
-    List prow;
+    String[] prow;
     static String localFile = "src/paquete/file/basededatos.xls";
 
 
@@ -100,16 +100,20 @@ public class ventana extends JFrame implements ActionListener{
 
         //CREAR LABEL DE PROYECTOS PENDIENTES
       llenado();
-      /**  System.out.println(prow.getItems());
-        for (int i = 0; i<=contador; i++){
-            label1 = new JLabel(prow.getItem(i+1));
+        for (int i = 0; i<contador; i++){
+            String[] y = prow[i].split("/");
+            String y1 = y[0];
+            String y2 = y[1];
+            System.out.println(y1+"-"+y2 );
+            label1 = new JLabel(y1 + " Dias restantes: " + y2, SwingConstants.CENTER);
             if (i==0) {
-                label1.setBounds(400, 15, 300, 50);
+                label1.setBounds(400,0, 300, 30);
+                add(label1);
             }else{
-                label1.setBounds(400, (15 + 50) * (i), 300, 50);
+                label1.setBounds(400, (15 + 30) * (i), 300, 30);
+                add(label1);
             }
-        add(label1);
-        }*/
+        }
 
     }
 
@@ -259,9 +263,9 @@ public class ventana extends JFrame implements ActionListener{
     }
 
         public void llenado() {
-            prow = new List();
             contador = 0;
             int status = 0;
+            prow = new String[100];
 
             Workbook workbook = null;
             try {
@@ -277,17 +281,15 @@ public class ventana extends JFrame implements ActionListener{
           //  System.out.println(cell.toString());
             while (!cell.equals("")) {
                 if (cell.equals("0")) {
-                    String z = sheet.getCell(0, status).getContents();
+                    String z = sheet.getCell(0, status).getContents()+ "/" + sheet.getCell(4, status).getContents();
                     System.out.println(z);
-                    String y = sheet.getCell(4, status).getContents();
-                    System.out.println(y);
                     contador = contador + 1;
-                    prow.add(String.valueOf(new pendientes(z, y)));
+                    prow[status]=z;
                 }
                 status = status + 1;
                 cell = sheet.getCell(5, status).getContents();
             }
-            System.out.println(prow.toString());
+            System.out.println(prow[0]);
         }
 
 
