@@ -226,7 +226,7 @@ public class ventana extends JFrame implements ActionListener{
                     break;
                 }else {
                     x = x +1;
-                    cell = sheet.getCell(x, 0).getContents();
+                    cell = sheet.getCell(0, x).getContents();
                     System.out.println(x);
                     System.out.println(cell);
                 }
