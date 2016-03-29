@@ -1,20 +1,14 @@
 package paquete;
 
 import jxl.*;
-import jxl.format.CellFormat;
 import jxl.read.biff.BiffException;
 import jxl.write.*;
-import jxl.write.Label;
-import jxl.write.biff.CellValue;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
 
 public class ventana extends JFrame implements ActionListener{
 
@@ -27,7 +21,8 @@ public class ventana extends JFrame implements ActionListener{
     int i, j;
     int status, contador;
     String[] prow;
-    static String localFile = "src/paquete/file/basededatos.xls";
+    String localFile = "src/paquete/file/basededatos.xls";
+    String textdb = "src/paquete/file/dbt.txt";
 
 
     public ventana(){
@@ -101,10 +96,9 @@ public class ventana extends JFrame implements ActionListener{
         //CREAR LABEL DE PROYECTOS PENDIENTES
       llenado();
         for (int i = 0; i<contador; i++){
-            String[] y = prow[i].split("/");
+            String[] y = prow[i+1].split("/");
             String y1 = y[0];
             String y2 = y[1];
-            System.out.println(y1+"-"+y2 );
             label1 = new JLabel(y1 + " Dias restantes: " + y2, SwingConstants.CENTER);
             if (i==0) {
                 label1.setBounds(400,0, 300, 30);
@@ -117,8 +111,17 @@ public class ventana extends JFrame implements ActionListener{
 
     }
 
-    public void guardar(int x, String orden, Sheet sheet){
-
+    public void guardar(int x, String orden, Sheet sheet) throws IOException {
+       File file = new File(localFile);
+        FileWriter salida = null;
+        try {
+            salida = new FileWriter(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        salida.write("\t");
+        salida.write("\n");
+        salida.write("18/03/2016");
     }
 
     public void cambioYear() {
@@ -135,9 +138,9 @@ public class ventana extends JFrame implements ActionListener{
             case 0:
             case 2:
             case 4:
+            case 6:
             case 7:
-            case 8:
-            case 10:
+            case 9:
             case 11:
                 days = new String[32];
                 for (int i = 1; i < days.length; i++) {
@@ -214,6 +217,7 @@ public class ventana extends JFrame implements ActionListener{
     public void buscar(String orden) throws IOException, BiffException {
         int x = 0;
         try{
+
             Workbook workbook = Workbook.getWorkbook(new File(localFile));
 
             Sheet sheet = workbook.getSheet(0);
@@ -227,38 +231,11 @@ public class ventana extends JFrame implements ActionListener{
                 }else {
                     x = x +1;
                     cell = sheet.getCell(0, x).getContents();
-                    System.out.println(x);
-                    System.out.println(cell);
                 }
             }
             guardar(x, orden, sheet);
         }catch (IOException e){
             e.printStackTrace();
-        }
-    }
-
-    public class pendientes{
-        private String otmp, dias;
-
-        public pendientes(String otmp, String dias){
-            this.otmp = otmp;
-            this.dias = dias;
-        }
-
-        public void setOtmp(String otmp){
-            this.otmp = otmp;
-        }
-
-        public void setDias(String dias){
-            this.dias = dias;
-        }
-
-        public String getOtmp(){
-            return otmp;
-        }
-
-        public String getDias(){
-            return dias;
         }
     }
 
@@ -278,18 +255,15 @@ public class ventana extends JFrame implements ActionListener{
 
             Sheet sheet = workbook.getSheet(0);
             String cell = sheet.getCell(5, 0).getContents();
-          //  System.out.println(cell.toString());
             while (!cell.equals("")) {
                 if (cell.equals("0")) {
                     String z = sheet.getCell(0, status).getContents()+ "/" + sheet.getCell(4, status).getContents();
-                    System.out.println(z);
                     contador = contador + 1;
-                    prow[status]=z;
+                    prow[contador]=z;
                 }
                 status = status + 1;
                 cell = sheet.getCell(5, status).getContents();
             }
-            System.out.println(prow[0]);
         }
 
 
