@@ -1,5 +1,6 @@
 package paquete;
 
+import javafx.application.Application;
 import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.*;
@@ -9,6 +10,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.io.File;
+import java.util.Set;
 
 public class ventana extends JFrame implements ActionListener{
 
@@ -16,13 +19,14 @@ public class ventana extends JFrame implements ActionListener{
     JLabel label, title, etiqueta, label1;
     JComboBox day, month, year;
     JTextField OTMP;
-    int dia, mes, ano;
-    String orden;
+    String dia, mes, ano;
+    String orden, fecha, proyecto;
     int i, j;
     int status, contador;
     String[] prow;
     String localFile = "src/paquete/file/basededatos.xls";
     String textdb = "src/paquete/file/dbt.txt";
+    String jsguardado = "src/paquete/file/savedb.vbs";
 
 
     public ventana(){
@@ -40,6 +44,12 @@ public class ventana extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 orden = OTMP.getText().toUpperCase();
+                dia = day.getSelectedItem().toString();
+                mes = month.getSelectedItem().toString();
+                ano = year.getSelectedItem().toString();
+                fecha = dia + "/" + mes + "/" + ano;
+                System.out.println(fecha);
+                proyecto = orden + "=" + fecha + "|";
                 if (OTMP.getText().equals("")) {
                     JOptionPane.showMessageDialog(ventana.this, "OTMP no puede estar vacia");
                 } else {
@@ -51,7 +61,13 @@ public class ventana extends JFrame implements ActionListener{
                         e1.printStackTrace();
                     }
                 }
+                try {
+                    guardar(proyecto);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
+
         });
 
         label = new JLabel();
@@ -95,6 +111,12 @@ public class ventana extends JFrame implements ActionListener{
 
         //CREAR LABEL DE PROYECTOS PENDIENTES
       llenado();
+        String cmd = jsguardado;
+        try {
+            Runtime.getRuntime().exec(cmd);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
         for (int i = 0; i<contador; i++){
             String[] y = prow[i+1].split("/");
             String y1 = y[0];
@@ -111,18 +133,33 @@ public class ventana extends JFrame implements ActionListener{
 
     }
 
-    public void guardar(int x, String orden, Sheet sheet) throws IOException {
-       File file = new File(localFile);
-        FileWriter salida = null;
-        try {
-            salida = new FileWriter(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void guardar(String proyecto) throws IOException {
+        File file = new File(textdb);
+        FileReader fr = new FileReader(textdb);
+        String cadena, cadena2 = null;
+
+
+        BufferedReader br = new BufferedReader(fr);
+        while((cadena = br.readLine())!=null){
+            cadena2 = cadena;
+            System.out.println(cadena2 + proyecto);
         }
-        salida.write("\t");
-        salida.write("\n");
-        salida.write("18/03/2016");
+
+        br.close();
+        fr.close();
+
+        if (file.exists()) {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(textdb));
+            if (cadena2 == null){
+                bw.write(proyecto);
+            }else {
+                bw.write(cadena2 + proyecto);
+            }
+            bw.flush();
+            bw.close();
+        }
     }
+
 
     public void cambioYear() {
         j = year.getSelectedIndex();
@@ -233,7 +270,6 @@ public class ventana extends JFrame implements ActionListener{
                     cell = sheet.getCell(0, x).getContents();
                 }
             }
-            guardar(x, orden, sheet);
         }catch (IOException e){
             e.printStackTrace();
         }
