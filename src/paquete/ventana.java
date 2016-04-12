@@ -1,10 +1,8 @@
 package paquete;
-
 import javafx.application.Application;
 import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,7 +19,7 @@ public class ventana extends JFrame implements ActionListener{
     JTextField OTMP;
     String dia, mes, ano;
     String orden, fecha, proyecto;
-    int i, j, ev;
+    int i, j, ev, condicion;
     int status, contador;
     String[] prow;
     //MODIFICAR RUTAS
@@ -29,6 +27,8 @@ public class ventana extends JFrame implements ActionListener{
     String textdb = "src/paquete/file/dbt.txt";
     String jsguardado = "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\savedb.vbs";
     String jsescritura =  "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\writedb.vbs";
+
+/**---------------------------------------------SE CREA VENTANA EN GRAL.---------------------------------------------------------------------*/
 
     public ventana(){
         String[] days = new String[0];
@@ -55,7 +55,7 @@ public class ventana extends JFrame implements ActionListener{
                     JOptionPane.showMessageDialog(ventana.this, "OTMP no puede estar vacia");
                 } else {
                     try {
-                        buscar(orden);
+                        buscar(orden, condicion);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     } catch (BiffException e1) {
@@ -63,14 +63,12 @@ public class ventana extends JFrame implements ActionListener{
                     }
                 }
                 try {
-                    guardar(proyecto);
+                    guardar(proyecto, condicion);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
             }
-
         });
-
         label = new JLabel();
         label.setBounds(200, 0, 300, 350);
         //label.setIcon();
@@ -83,15 +81,12 @@ public class ventana extends JFrame implements ActionListener{
         title = new JLabel("ORDEN DE TRABAJO");
         title.setBounds(15, 15, 250, 50);
         add(title);
-
         etiqueta = new JLabel("FECHA DE ENTREGA DE PLANOS");
         etiqueta.setBounds(15, 100, 250, 50);
         add(etiqueta);
-
         OTMP = new JTextField();
         OTMP.setBounds(15, 60, 200, 30);
         add(OTMP);
-
         month = new JComboBox(months);
         month.addItemListener(e -> {
             cambio();
@@ -102,15 +97,12 @@ public class ventana extends JFrame implements ActionListener{
         year.addItemListener(xe -> {
             cambioYear();
         });
-
         year.setBounds(245, 150, 100, 25);
         add(year);
-
         day= new JComboBox(days);
         day.setBounds(165, 150, 55, 25);
         add(day);
-
-        //CREAR LABEL DE PROYECTOS PENDIENTES
+        /**--------------CREAR LABEL DE PROYECTOS PENDIENTES----------*/
         String cmd = "cmd /C " + jsguardado;
         try {
             Runtime r = Runtime.getRuntime();
@@ -136,31 +128,49 @@ public class ventana extends JFrame implements ActionListener{
                 add(label1);
             }
         }
-
     }
 
-    public void guardar(String proyecto) throws IOException {
-        File file = new File(textdb);
+/**-------------------------------------------------------------GUARDAR--------------------------------------------------------------------------------*/
 
-        if (file.exists()) {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(textdb));
+    public void guardar(String proyecto, int condicion) throws IOException {
+        System.out.println("condicion de guardar inicio " + condicion);
+        if (condicion == 0) {
+            File file = new File(textdb);
+            if (file.exists()) {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(textdb));
                 bw.write(proyecto);
-            bw.flush();
-            bw.close();
-        }
-        String cmd = "cmd /C " + jsescritura;
-        try {
-            Runtime r = Runtime.getRuntime();
-            Process p = r.exec(cmd);
-            ev = p.waitFor();
-        }catch (IOException e){
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                bw.flush();
+                bw.close();
+            }
+            String cmd = "cmd /C " + jsescritura;
+            try {
+                Runtime r = Runtime.getRuntime();
+                Process p = r.exec(cmd);
+                ev = p.waitFor();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            /**--SEPARACION DE LLENADO--*/
+            llenado();
+            for (int i = 0; i < contador; i++) {
+                String[] y = prow[i + 1].split("/");
+                String y1 = y[0];
+                String y2 = y[1];
+                label1 = new JLabel(y1 + " Dias restantes: " + y2, SwingConstants.CENTER);
+                if (i == 0) {
+                    label1.setBounds(400, 0, 300, 30);
+                    add(label1);
+                } else {
+                    label1.setBounds(400, (15 + 30) * (i), 300, 30);
+                    add(label1);
+                }
+            }
+        }System.out.println("final guardar "+ condicion);
     }
 
-
+/**---------------------------------------------------------COMBO BOX MESES---------------------------------------------------------------*/
 
     public void cambioYear() {
         j = year.getSelectedIndex();
@@ -192,7 +202,7 @@ public class ventana extends JFrame implements ActionListener{
                 break;
             case 1:
                 day.removeAllItems();
-                if (j== 1 || j==5 || j==9 || j==13){
+                if (j == 1 || j == 5 || j == 9 || j == 13) {
                     days = new String[30];
                     for (i = 1; i < days.length; i++) {
                         if (i < 10) {
@@ -202,7 +212,7 @@ public class ventana extends JFrame implements ActionListener{
                         }
                         day.addItem(days[i]);
                     }
-                }else{
+                } else {
                     day.removeAllItems();
                     String[] days2 = new String[29];
                     for (i = 1; i < days2.length; i++) {
@@ -225,24 +235,19 @@ public class ventana extends JFrame implements ActionListener{
                     }
                     day.addItem(days[i]);
                 }
-                break;
+            break;
         }
-        System.out.println(index);
-        System.out.println(year.getSelectedIndex());
-        System.out.println(j);
     }
+
+/**---------------------------------------------------------------IMAGEN DE FONDO-----------------------------------------------------------------*/
 
     public void paintComponente(Graphics g){
         Dimension dimension = getSize();
         String phat = "/images/logominepower.png";
         ImageIcon imagen = new ImageIcon(getClass().getResource(phat));
         g.drawImage(imagen.getImage(), 200, 0, dimension.width, dimension.height, null);
-
         super.paintComponents(g);
     }
-
-
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -251,36 +256,39 @@ public class ventana extends JFrame implements ActionListener{
        }
     }
 
+/**------------------------------------------------------------------BUSCAR---------------------------------------------------------------------*/
 
-    public void buscar(String orden) throws IOException, BiffException {
+    public void buscar(String orden, int condicion) throws IOException, BiffException {
         int x = 0;
         try{
-
             Workbook workbook = Workbook.getWorkbook(new File(localFile));
-
             Sheet sheet = workbook.getSheet(0);
-
             String cell = sheet.getCell(x,0).getContents();
             System.out.println(cell);
             while(!cell.equals("")){
                 if (cell.equals(orden)){
+                    condicion = 1;
+                    System.out.println("condicion de buscar" + condicion);
                     JOptionPane.showMessageDialog(ventana.this, "OTMP ya existente");
                     break;
                 }else {
+                    condicion = 0;
+                    System.out.println("condicion de buscar" + condicion);
                     x = x +1;
                     cell = sheet.getCell(0, x).getContents();
                 }
             }
         }catch (IOException e){
             e.printStackTrace();
-        }
+        }System.out.println("condicion de buscar al final" + condicion);
     }
+
+/**------------------------------------------------------LLENADO----------------------------------------------------------------------------------*/
 
         public void llenado() {
             contador = 0;
             int status = 0;
             prow = new String[100];
-
             Workbook workbook = null;
             try {
                 workbook = Workbook.getWorkbook(new File(localFile));
@@ -289,7 +297,6 @@ public class ventana extends JFrame implements ActionListener{
             } catch (BiffException e) {
                 e.printStackTrace();
             }
-
             Sheet sheet = workbook.getSheet(0);
             String cell = sheet.getCell(5, 0).getContents();
             while (!cell.equals("")) {
@@ -303,11 +310,9 @@ public class ventana extends JFrame implements ActionListener{
                 cell = sheet.getCell(5, status).getContents();
             }
             workbook.close();
-
         }
 
-
-
+/**---------------------------------------------------------VENTANA-------------------------------------------------------------------------------------------*/
 
     public static void main(String[] args){
         ventana v = new ventana();
