@@ -113,7 +113,6 @@ public class ventana extends JFrame implements ActionListener{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(ev);
         llenado();
         for (int i = 0; i<contador; i++){
             String[] y = prow[i+1].split("/");
