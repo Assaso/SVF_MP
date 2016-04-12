@@ -28,7 +28,7 @@ public class ventana extends JFrame implements ActionListener{
     String localFile = "src/paquete/file/basededatos.xls";
     String textdb = "src/paquete/file/dbt.txt";
     String jsguardado = "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\savedb.vbs";
-
+    String jsescritura =  "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\writedb.vbs";
 
     public ventana(){
         String[] days = new String[0];
@@ -141,30 +141,25 @@ public class ventana extends JFrame implements ActionListener{
 
     public void guardar(String proyecto) throws IOException {
         File file = new File(textdb);
-        FileReader fr = new FileReader(textdb);
-        String cadena, cadena2 = null;
-
-
-        BufferedReader br = new BufferedReader(fr);
-        while((cadena = br.readLine())!=null){
-            cadena2 = cadena;
-            System.out.println(cadena2 + proyecto);
-        }
-
-        br.close();
-        fr.close();
 
         if (file.exists()) {
             BufferedWriter bw = new BufferedWriter(new FileWriter(textdb));
-            if (cadena2 == null){
                 bw.write(proyecto);
-            }else {
-                bw.write(cadena2 + proyecto);
-            }
             bw.flush();
             bw.close();
         }
+        String cmd = "cmd /C " + jsescritura;
+        try {
+            Runtime r = Runtime.getRuntime();
+            Process p = r.exec(cmd);
+            ev = p.waitFor();
+        }catch (IOException e){
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
 
     public void cambioYear() {
