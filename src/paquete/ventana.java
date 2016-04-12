@@ -21,12 +21,14 @@ public class ventana extends JFrame implements ActionListener{
     JTextField OTMP;
     String dia, mes, ano;
     String orden, fecha, proyecto;
-    int i, j;
+    int i, j, ev;
     int status, contador;
     String[] prow;
+
+    //MODIFICAR RUTAS
     String localFile = "src/paquete/file/basededatos.xls";
     String textdb = "src/paquete/file/dbt.txt";
-    String jsguardado = "src/paquete/file/savedb.vbs";
+    String jsguardado = "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\savedb.vbs";
 
 
     public ventana(){
@@ -110,13 +112,18 @@ public class ventana extends JFrame implements ActionListener{
         add(day);
 
         //CREAR LABEL DE PROYECTOS PENDIENTES
-      llenado();
-        String cmd = jsguardado;
+        String cmd = "cmd /C " + jsguardado;
         try {
-            Runtime.getRuntime().exec(cmd);
+            Runtime r = Runtime.getRuntime();
+            Process p = r.exec(cmd);
+            ev = p.waitFor();
         }catch (IOException e){
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        System.out.println(ev);
+        llenado();
         for (int i = 0; i<contador; i++){
             String[] y = prow[i+1].split("/");
             String y1 = y[0];
@@ -296,10 +303,13 @@ public class ventana extends JFrame implements ActionListener{
                     String z = sheet.getCell(0, status).getContents()+ "/" + sheet.getCell(4, status).getContents();
                     contador = contador + 1;
                     prow[contador]=z;
+                    System.out.println(z);
                 }
                 status = status + 1;
                 cell = sheet.getCell(5, status).getContents();
             }
+            workbook.close();
+
         }
 
 
