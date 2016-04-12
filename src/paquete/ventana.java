@@ -24,7 +24,6 @@ public class ventana extends JFrame implements ActionListener{
     int i, j, ev;
     int status, contador;
     String[] prow;
-
     //MODIFICAR RUTAS
     String localFile = "src/paquete/file/basededatos.xls";
     String textdb = "src/paquete/file/dbt.txt";
