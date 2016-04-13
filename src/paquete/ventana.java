@@ -67,6 +67,7 @@ public class ventana extends JFrame implements ActionListener{
                         }
                     }
                 }
+                actualizarPantalla();
             }
         });
         label = new JLabel();
@@ -247,6 +248,13 @@ public class ventana extends JFrame implements ActionListener{
         ImageIcon imagen = new ImageIcon(getClass().getResource(phat));
         g.drawImage(imagen.getImage(), 200, 0, dimension.width, dimension.height, null);
         super.paintComponents(g);
+    }
+
+    public void actualizarPantalla(){
+        SwingUtilities.updateComponentTreeUI(this);
+        synchronized (getTreeLock()){
+            validateTree();
+        }
     }
 
     @Override
