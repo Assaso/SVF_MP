@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.*;
 import java.io.File;
 import java.util.Set;
@@ -14,23 +16,25 @@ import java.util.Set;
 public class ventana extends JFrame implements ActionListener{
 
     JButton boton, boton1, boton2;
-    JLabel label, title, etiqueta, label1;
-    JComboBox day, month, year;
+    JLabel label, title, etiqueta, label1, etiqueta2;
+    JComboBox day, month, year, personal;
     JTextField OTMP;
-    String dia, mes, ano;
+    String dia, mes, ano, persona;
     String orden, fecha, proyecto;
     int i, j, ev, condicion = 1;
     int status, contador;
     String[] prow;
     //MODIFICAR RUTAS
     String localFile = "src/paquete/file/basededatos.xls";
+    String ptText = "src/paquete/file/personaltemp.txt";
     String textdb = "src/paquete/file/dbt.txt";
     String jsguardado = "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\savedb.vbs";
     String jsescritura =  "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\writedb.vbs";
 
 /**---------------------------------------------------------SE CREA VENTANA EN GRAL.---------------------------------------------------------------------*/
 
-    public ventana(){
+    public ventana() {
+        String[] personas = new String[0];
         String[] days = new String[0];
         String[] months = {"", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
         String[] years = {"", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030"};
@@ -44,8 +48,8 @@ public class ventana extends JFrame implements ActionListener{
         boton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (day.getSelectedItem().toString().equals("")||month.getSelectedItem().toString().equals("") || year.getSelectedItem().toString().equals("")) {
-                    JOptionPane.showMessageDialog(ventana.this, " Se deben llenar campos de fecha ");
+                if (personal.getSelectedItem().toString().equals("")||day.getSelectedItem().toString().equals("")||month.getSelectedItem().toString().equals("") || year.getSelectedItem().toString().equals("")) {
+                    JOptionPane.showMessageDialog(ventana.this, " Se deben llenar campos de Fecha y/o Personal");
                 } else {
                     orden = OTMP.getText().toUpperCase();
                     dia = day.getSelectedItem().toString();
@@ -82,7 +86,7 @@ public class ventana extends JFrame implements ActionListener{
         title = new JLabel("ORDEN DE TRABAJO");
         title.setBounds(15, 15, 250, 50);
         add(title);
-        etiqueta = new JLabel("FECHA DE ENTREGA DE PLANOS");
+        etiqueta = new JLabel("FECHA DE INICIO DE FABRICACIÓN");
         etiqueta.setBounds(15, 100, 250, 50);
         add(etiqueta);
         OTMP = new JTextField();
@@ -104,6 +108,47 @@ public class ventana extends JFrame implements ActionListener{
         day.setBounds(165, 150, 55, 25);
         day.addItem("");
         add(day);
+        etiqueta2 = new JLabel("ASIGNACIÓN DE PERSONAL");
+        etiqueta2.setBounds(100, 195, 250, 25);
+        add(etiqueta2);
+        /**-------------------------------PERSONAL---------------**/
+        personal = new JComboBox(personas);
+        personal.setBounds(75, 230, 205, 25);
+        String line = "";
+        File fp = new File(ptText);
+
+        if (fp.exists()){
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(fp));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                line = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        String[] n = line.split("-");
+        for(int i = 0; i < n.length; i++){
+            String[] n1 = n[i].split("/");
+            String n2 = "";
+            n2 = n2 + n1[1];
+            personal.addItem(n2);
+        }
+
+
+
+        add(personal);
         /**--------------CREAR LABEL DE PROYECTOS PENDIENTES----------*/
         String cmd = "cmd /C " + jsguardado;
         try {
@@ -170,6 +215,7 @@ public class ventana extends JFrame implements ActionListener{
                 }
             }
     }
+
 
 /**---------------------------------------------------------COMBO BOX MESES---------------------------------------------------------------*/
 
