@@ -19,7 +19,7 @@ public class ventana extends JFrame implements ActionListener{
     JTextField OTMP;
     String dia, mes, ano;
     String orden, fecha, proyecto;
-    int i, j, ev, condicion;
+    int i, j, ev, condicion = 1;
     int status, contador;
     String[] prow;
     //MODIFICAR RUTAS
@@ -28,7 +28,7 @@ public class ventana extends JFrame implements ActionListener{
     String jsguardado = "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\savedb.vbs";
     String jsescritura =  "C:\\Users\\JGALLARDO\\IdeaProjects\\SVF_MP\\src\\paquete\\file\\writedb.vbs";
 
-/**---------------------------------------------SE CREA VENTANA EN GRAL.---------------------------------------------------------------------*/
+/**---------------------------------------------------------SE CREA VENTANA EN GRAL.---------------------------------------------------------------------*/
 
     public ventana(){
         String[] days = new String[0];
@@ -52,21 +52,22 @@ public class ventana extends JFrame implements ActionListener{
                 System.out.println(fecha);
                 proyecto = orden + "=" + fecha + "|";
                 if (OTMP.getText().equals("")) {
-                    JOptionPane.showMessageDialog(ventana.this, "OTMP no puede estar vacia");
+                    JOptionPane.showMessageDialog(ventana.this, " OTMP no puede estar vacia ");
                 } else {
                     try {
                         buscar(orden, condicion);
+            /**------------------- aqui se pierde el valor de condicion y se inicializa en 0 -----------------------*/
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     } catch (BiffException e1) {
                         e1.printStackTrace();
                     }
                 }
-                try {
+               /** try {
                     guardar(proyecto, condicion);
                 } catch (IOException e1) {
                     e1.printStackTrace();
-                }
+                }*/
             }
         });
         label = new JLabel();
@@ -267,15 +268,20 @@ public class ventana extends JFrame implements ActionListener{
             while(!cell.equals("")){
                 if (cell.equals(orden)){
                     condicion = 1;
-                    System.out.println("condicion de buscar" + condicion);
+                    System.out.println("condicion de buscar verdadero" + condicion);
                     JOptionPane.showMessageDialog(ventana.this, "OTMP ya existente");
                     break;
                 }else {
                     condicion = 0;
-                    System.out.println("condicion de buscar" + condicion);
+                    System.out.println("condicion de buscar falso" + condicion);
                     x = x +1;
                     cell = sheet.getCell(0, x).getContents();
                 }
+            }
+            try {
+                guardar(proyecto, condicion);
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         }catch (IOException e){
             e.printStackTrace();
