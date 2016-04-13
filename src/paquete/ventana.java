@@ -32,8 +32,8 @@ public class ventana extends JFrame implements ActionListener{
 
     public ventana(){
         String[] days = new String[0];
-        String[] months = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
-        String[] years = {"2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030"};
+        String[] months = {"", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
+        String[] years = {"", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030"};
         setLayout(null);
         boton= new JButton("SALIR");
         boton.setBounds(15, 300, 100, 50);
@@ -44,30 +44,29 @@ public class ventana extends JFrame implements ActionListener{
         boton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                orden = OTMP.getText().toUpperCase();
-                dia = day.getSelectedItem().toString();
-                mes = month.getSelectedItem().toString();
-                ano = year.getSelectedItem().toString();
-                fecha = dia + "/" + mes + "/" + ano;
-                System.out.println(fecha);
-                proyecto = orden + "=" + fecha + "|";
-                if (OTMP.getText().equals("")) {
-                    JOptionPane.showMessageDialog(ventana.this, " OTMP no puede estar vacia ");
+                if (day.getSelectedItem().toString().equals("")||month.getSelectedItem().toString().equals("") || year.getSelectedItem().toString().equals("")) {
+                    JOptionPane.showMessageDialog(ventana.this, " Se deben llenar campos de fecha ");
                 } else {
-                    try {
-                        buscar(orden, condicion);
-            /**------------------- aqui se pierde el valor de condicion y se inicializa en 0 -----------------------*/
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    } catch (BiffException e1) {
-                        e1.printStackTrace();
+                    orden = OTMP.getText().toUpperCase();
+                    dia = day.getSelectedItem().toString();
+                    mes = month.getSelectedItem().toString();
+                    ano = year.getSelectedItem().toString();
+                    fecha = dia + "/" + mes + "/" + ano;
+                    System.out.println(fecha);
+                    proyecto = orden + "=" + fecha + "|";
+                    if (OTMP.getText().equals("")) {
+                        JOptionPane.showMessageDialog(ventana.this, " OTMP no puede estar vacia ");
+                    } else {
+                        try {
+                            buscar(orden, condicion);
+                            /**------------------- aqui se pierde el valor de condicion y se inicializa en 0 -----------------------*/
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        } catch (BiffException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
-               /** try {
-                    guardar(proyecto, condicion);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }*/
             }
         });
         label = new JLabel();
@@ -102,6 +101,7 @@ public class ventana extends JFrame implements ActionListener{
         add(year);
         day= new JComboBox(days);
         day.setBounds(165, 150, 55, 25);
+        day.addItem("");
         add(day);
         /**--------------CREAR LABEL DE PROYECTOS PENDIENTES----------*/
         String cmd = "cmd /C " + jsguardado;
@@ -133,7 +133,6 @@ public class ventana extends JFrame implements ActionListener{
 /**-------------------------------------------------------------GUARDAR--------------------------------------------------------------------------------*/
 
     public void guardar(String proyecto, int condicion) throws IOException {
-        System.out.println("condicion de guardar inicio " + condicion);
         if (condicion == 0) {
             File file = new File(textdb);
             if (file.exists()) {
@@ -142,32 +141,33 @@ public class ventana extends JFrame implements ActionListener{
                 bw.flush();
                 bw.close();
             }
-            String cmd = "cmd /C " + jsescritura;
-            try {
-                Runtime r = Runtime.getRuntime();
-                Process p = r.exec(cmd);
-                ev = p.waitFor();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            /**--SEPARACION DE LLENADO--*/
-            llenado();
-            for (int i = 0; i < contador; i++) {
-                String[] y = prow[i + 1].split("/");
-                String y1 = y[0];
-                String y2 = y[1];
-                label1 = new JLabel(y1 + " Dias restantes: " + y2, SwingConstants.CENTER);
-                if (i == 0) {
-                    label1.setBounds(400, 0, 300, 30);
-                    add(label1);
-                } else {
-                    label1.setBounds(400, (15 + 30) * (i), 300, 30);
-                    add(label1);
+
+                String cmd = "cmd /C " + jsescritura;
+                try {
+                    Runtime r = Runtime.getRuntime();
+                    Process p = r.exec(cmd);
+                    ev = p.waitFor();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                /**--SEPARACION DE LLENADO--*/
+                llenado();
+                for (int i = 0; i < contador; i++) {
+                    String[] y = prow[i + 1].split("/");
+                    String y1 = y[0];
+                    String y2 = y[1];
+                    label1 = new JLabel(y1 + " Dias restantes: " + y2, SwingConstants.CENTER);
+                    if (i == 0) {
+                        label1.setBounds(400, 0, 300, 30);
+                        add(label1);
+                    } else {
+                        label1.setBounds(400, (15 + 30) * (i), 300, 30);
+                        add(label1);
+                    }
                 }
             }
-        }System.out.println("final guardar "+ condicion);
     }
 
 /**---------------------------------------------------------COMBO BOX MESES---------------------------------------------------------------*/
@@ -183,13 +183,13 @@ public class ventana extends JFrame implements ActionListener{
         int index = month.getSelectedIndex();
         String[] days;
         switch (index) {
-            case 0:
-            case 2:
-            case 4:
-            case 6:
+            case 1:
+            case 3:
+            case 5:
             case 7:
-            case 9:
-            case 11:
+            case 8:
+            case 10:
+            case 12:
                 days = new String[32];
                 for (int i = 1; i < days.length; i++) {
                     if (i < 10) {
@@ -200,7 +200,7 @@ public class ventana extends JFrame implements ActionListener{
                     day.addItem(days[i]);
                 }
                 break;
-            case 1:
+            case 2:
                 day.removeAllItems();
                 if (j == 1 || j == 5 || j == 9 || j == 13) {
                     days = new String[30];
@@ -264,16 +264,13 @@ public class ventana extends JFrame implements ActionListener{
             Workbook workbook = Workbook.getWorkbook(new File(localFile));
             Sheet sheet = workbook.getSheet(0);
             String cell = sheet.getCell(x,0).getContents();
-            System.out.println(cell);
             while(!cell.equals("")){
                 if (cell.equals(orden)){
                     condicion = 1;
-                    System.out.println("condicion de buscar verdadero" + condicion);
                     JOptionPane.showMessageDialog(ventana.this, "OTMP ya existente");
                     break;
                 }else {
                     condicion = 0;
-                    System.out.println("condicion de buscar falso" + condicion);
                     x = x +1;
                     cell = sheet.getCell(0, x).getContents();
                 }
@@ -285,7 +282,7 @@ public class ventana extends JFrame implements ActionListener{
             }
         }catch (IOException e){
             e.printStackTrace();
-        }System.out.println("condicion de buscar al final" + condicion);
+        }
     }
 
 /**------------------------------------------------------LLENADO----------------------------------------------------------------------------------*/
