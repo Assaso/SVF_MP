@@ -55,9 +55,10 @@ public class ventana extends JFrame implements ActionListener{
                     dia = day.getSelectedItem().toString();
                     mes = month.getSelectedItem().toString();
                     ano = year.getSelectedItem().toString();
+                    persona = personal.getSelectedItem().toString();
                     fecha = dia + "/" + mes + "/" + ano;
                     System.out.println(fecha);
-                    proyecto = orden + "=" + fecha + "|";
+                    proyecto = orden + "=" + fecha + "=" + persona + "|";
                     if (OTMP.getText().equals("")) {
                         JOptionPane.showMessageDialog(ventana.this, " OTMP no puede estar vacia ");
                     } else {
@@ -318,6 +319,9 @@ public class ventana extends JFrame implements ActionListener{
             Workbook workbook = Workbook.getWorkbook(new File(localFile));
             Sheet sheet = workbook.getSheet(0);
             String cell = sheet.getCell(x,0).getContents();
+            if(cell.equals("")){
+                condicion = 0;
+            }
             while(!cell.equals("")){
                 if (cell.equals(orden)){
                     condicion = 1;
