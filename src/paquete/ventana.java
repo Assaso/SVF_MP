@@ -193,7 +193,7 @@ public class ventana extends JFrame implements ActionListener{
             }
         }
         label = new JLabel();
-        label.setBounds(200, 0, 300, 350);
+        label.setBounds(50, 0, 300, 350);
         label.setOpaque(true);
         label.setIcon(imagen);
         add(label);
