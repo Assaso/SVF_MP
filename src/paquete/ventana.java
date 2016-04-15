@@ -111,6 +111,7 @@ public class ventana extends JFrame implements ActionListener{
         /**-------------------------------PERSONAL---------------**/
         personal = new JComboBox(personas);
         personal.setBounds(75, 230, 205, 25);
+        personal.addItem("");
         String line = "";
         File fp = new File(ptText);
 
@@ -133,19 +134,17 @@ public class ventana extends JFrame implements ActionListener{
                 e.printStackTrace();
             }
         }
-
-
         String[] n = line.split("-");
         for(int i = 0; i < n.length; i++){
             String[] n1 = n[i].split("/");
-            String n2 = "";
-            n2 = n2 + n1[1];
-            personal.addItem(n2);
+            if(n1[0].equals("1")){
+                String n2 = "";
+                n2 = n2 + n1[1];
+                personal.addItem(n2);
+            }
         }
-
-
-
         add(personal);
+
         /**--------------CREAR LABEL DE PROYECTOS PENDIENTES----------*/
         String cmd = "cmd /C " + jsguardado;
         try {
@@ -233,8 +232,6 @@ public class ventana extends JFrame implements ActionListener{
                 bw.close();
             }
 
-
-
                 String cmd = "cmd /C " + jsescritura;
                 try {
                     Runtime r = Runtime.getRuntime();
@@ -282,6 +279,7 @@ public class ventana extends JFrame implements ActionListener{
                     }
                 }
             }
+
     }
 
 
