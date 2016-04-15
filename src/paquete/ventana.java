@@ -1,17 +1,14 @@
 package paquete;
-import javafx.application.Application;
-import jxl.*;
+
+import jxl.Sheet;
+import jxl.Workbook;
 import jxl.read.biff.BiffException;
-import jxl.write.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.*;
-import java.io.File;
-import java.util.Set;
 
 public class ventana extends JFrame implements ActionListener{
 
@@ -24,6 +21,7 @@ public class ventana extends JFrame implements ActionListener{
     int i, j, ev, condicion = 1;
     int status, contador;
     String[] prow;
+
     //MODIFICAR RUTAS
     String localFile = "src/paquete/file/basededatos.xls";
     String ptText = "src/paquete/file/personaltemp.txt";
@@ -38,6 +36,8 @@ public class ventana extends JFrame implements ActionListener{
         String[] days = new String[0];
         String[] months = {"", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
         String[] years = {"", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030"};
+        String phat = "/images/logominepower.png";
+        ImageIcon imagen = new ImageIcon(getClass().getResource(phat));
         setLayout(null);
         boton= new JButton("SALIR");
         boton.setBounds(15, 300, 100, 50);
@@ -75,11 +75,7 @@ public class ventana extends JFrame implements ActionListener{
                 actualizarPantalla();
             }
         });
-        label = new JLabel();
-        label.setBounds(200, 0, 300, 350);
-        //label.setIcon();
-        label.setForeground(Color.WHITE);
-        add(label);
+
         boton.addActionListener(this);
         boton1 = new JButton("Generar reporte");
         boton1.setBounds(420, 300, 250, 50);
@@ -166,20 +162,46 @@ public class ventana extends JFrame implements ActionListener{
             String[] y = prow[i+1].split("/");
             String y1 = y[0];
             String y2 = y[1];
+            int yi2 = Integer.parseInt(y2);
             label1 = new JLabel(y1 + " Dias restantes: " + y2, SwingConstants.CENTER);
+            label1.setOpaque(true);
             if (i==0) {
                 label1.setBounds(400,0, 300, 30);
+                if (yi2 > 3){
+                    label1.setBackground(Color.GREEN);
+                }else{
+                    if (yi2 <= 3 && yi2 >= 0){
+                        label1.setBackground(Color.YELLOW);
+                    }else{
+                        label1.setBackground(Color.RED);
+                    }
+                }
                 add(label1);
             }else{
                 label1.setBounds(400, (15 + 30) * (i), 300, 30);
+                label1.setOpaque(true);
+                if (yi2 > 3){
+                    label1.setBackground(Color.GREEN);
+                }else{
+                    if (yi2 <= 3 && yi2 >= 0){
+                        label1.setBackground(Color.YELLOW);
+                    }else{
+                        label1.setBackground(Color.RED);
+                    }
+                }
                 add(label1);
             }
         }
+        label = new JLabel();
+        label.setBounds(200, 0, 300, 350);
+        label.setOpaque(true);
+        label.setIcon(imagen);
+        add(label);
     }
 
 /**-------------------------------------------------------------GUARDAR--------------------------------------------------------------------------------*/
 
-    public void guardar(String proyecto, int condicion) throws IOException {
+    public void guardar(String proyecto, int condicion, String persona) throws IOException {
         if (condicion == 0) {
             File file = new File(textdb);
             if (file.exists()) {
@@ -188,6 +210,30 @@ public class ventana extends JFrame implements ActionListener{
                 bw.flush();
                 bw.close();
             }
+
+            File file1 = new File(ptText);
+            if(file1.exists()){
+                BufferedReader br = new BufferedReader(new FileReader(file1));
+                String linep = br.readLine();
+                String[] linep1 = linep.split("-");
+                String[] linep2;
+                String completo = "";
+                for (int i = 0; i < linep1.length; i++){
+                    linep2 = linep1[i].split("/");
+                    if(linep2[1].equals(persona)){
+                        linep2[0] = "" + 0;
+                    }
+                    completo = completo + linep2[0] + "/" + linep2[1] + "-";
+                }
+                br.close();
+
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file1));
+                bw.write(completo);
+                bw.flush();
+                bw.close();
+            }
+
+
 
                 String cmd = "cmd /C " + jsescritura;
                 try {
@@ -205,12 +251,33 @@ public class ventana extends JFrame implements ActionListener{
                     String[] y = prow[i + 1].split("/");
                     String y1 = y[0];
                     String y2 = y[1];
+                    int yi2 = Integer.parseInt(y2);
                     label1 = new JLabel(y1 + " Dias restantes: " + y2, SwingConstants.CENTER);
                     if (i == 0) {
                         label1.setBounds(400, 0, 300, 30);
+                        label1.setOpaque(true);
+                        if (yi2 > 3){
+                            label1.setBackground(Color.GREEN);
+                        }else{
+                            if (yi2 <= 3 && yi2 >= 0){
+                                label1.setBackground(Color.YELLOW);
+                            }else{
+                                label1.setBackground(Color.RED);
+                            }
+                        }
                         add(label1);
                     } else {
                         label1.setBounds(400, (15 + 30) * (i), 300, 30);
+                        label1.setOpaque(true);
+                        if (yi2 > 3){
+                            label1.setBackground(Color.GREEN);
+                        }else{
+                            if (yi2 <= 3 && yi2 >= 0){
+                                label1.setBackground(Color.YELLOW);
+                            }else{
+                                label1.setBackground(Color.RED);
+                            }
+                        }
                         add(label1);
                     }
                 }
@@ -287,15 +354,7 @@ public class ventana extends JFrame implements ActionListener{
         }
     }
 
-/**---------------------------------------------------------------IMAGEN DE FONDO-----------------------------------------------------------------*/
-
-    public void paintComponente(Graphics g){
-        Dimension dimension = getSize();
-        String phat = "/images/logominepower.png";
-        ImageIcon imagen = new ImageIcon(getClass().getResource(phat));
-        g.drawImage(imagen.getImage(), 200, 0, dimension.width, dimension.height, null);
-        super.paintComponents(g);
-    }
+/**---------------------------------------------------------------ACTUALIZAR PANTALLA-----------------------------------------------------------------*/
 
     public void actualizarPantalla(){
         SwingUtilities.updateComponentTreeUI(this);
@@ -304,6 +363,7 @@ public class ventana extends JFrame implements ActionListener{
         }
     }
 
+    /**-------------------------------------------------------BOTON SALIR-------------------------------------------------------------------------*/
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == boton) {
@@ -334,7 +394,7 @@ public class ventana extends JFrame implements ActionListener{
                 }
             }
             try {
-                guardar(proyecto, condicion);
+                guardar(proyecto, condicion, persona);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
