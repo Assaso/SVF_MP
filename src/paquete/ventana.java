@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.*;
+import java.util.Iterator;
 
 public class ventana extends JFrame implements ActionListener
 {
@@ -163,6 +164,7 @@ public class ventana extends JFrame implements ActionListener
         personal.setBounds(75, 230, 205, 25);
         captura.add(personal);
 
+
         label = new JLabel();
         label.setBounds(50, 0, 300, 350);
         label.setOpaque(true);
@@ -292,8 +294,10 @@ public class ventana extends JFrame implements ActionListener
             actualizarPantalla();
 
             PersonaDAO personas = new PersonaDAO(ptText);
-            personal.addItem(personas.leerPersonas());
-
+            String[] count = personas.leerPersonas();
+            for (i = 0; i < count.length; i++){
+                personal.addItem(count[i]);
+            }
 
         }
 
